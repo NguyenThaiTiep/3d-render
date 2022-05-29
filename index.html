@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+</head>
+
+<body>
+    <script src="three.min.js"></script>
+    <script src="GLTFLoader.js"></script>
+    <script src="OrbitControls.js"></script>
+    <script>
+
+        let scene, camera, renderer;
+
+        const DEMO_LINK = 'https://r105.threejsfundamentals.org/threejs/resources/models/cartoon_lowpoly_small_city_free_pack/scene.gltf'
+
+        function init() {
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color()
+
+            camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 5000);
+            camera.rotation.y = 45 / 180 * Math.PI;
+            camera.position.x = 800;
+            camera.position.y = 100;
+            camera.position.z = 1000;
+
+
+
+            const skyColor = 0xB1E1FF;  // light blue
+            const groundColor = 0x404040;  // brownish orange
+            const intensity = 1;
+            const light = new THREE.HemisphereLight(skyColor, groundColor, intensity);
+            scene.add(light);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+
+            let controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.addEventListener('change', renderer)
+
+
+            document.body.appendChild(renderer.domElement);
+
+
+            let loader = new THREE.GLTFLoader();
+            // demo https://r105.threejsfundamentals.org/threejs/resources/models/cartoon_lowpoly_small_city_free_pack/scene.gltf
+            loader.load(DEMO_LINK, function (gltf) {
+                let car = gltf.scene.children[0];
+                car.scale.set(0.5, 0.5, 0.5);
+                scene.add(gltf.scene);
+                animate();
+            })
+            window.addEventListener('resize', onWindowResize);
+        }
+        function animate() {
+            renderer.render(scene, camera);
+            requestAnimationFrame(animate)
+        }
+
+        function onWindowResize() {
+
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+        }
+        init()
+    </script>
+</body>
+
+</html>
